@@ -1,0 +1,44 @@
+# Build results
+bin/
+obj/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio cache
+.vs/
+.vscode/
+
+# ReSharper
+.idea/
+*.sln.iml
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Entity Framework
+Migrations/
+
+# Dependencies
+packages/
+.nuget/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
