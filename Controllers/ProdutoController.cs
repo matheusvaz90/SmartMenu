@@ -40,7 +40,7 @@ namespace SmartMenu.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Produto>> CreateProduto(CriarProdutoDto dto)
         {
-            var produto = new Produto  // ⬅️ Nome consistente
+            var produto = new Produto
             {
                 Nome = dto.Nome,
                 Descricao = dto.Descricao,
@@ -48,10 +48,43 @@ namespace SmartMenu.Api.Controllers
                 Ativo = dto.Ativo
             };
 
-            _context.Produtos.Add(produto);  // ⬅️ Tabela correta
+            _context.Produtos.Add(produto);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetProduto), new { id = produto.Id }, produto);
         }
+
+        [HttpPost("{id}/receita")]
+        public async Task<ActionResult> AdicionarReceita(int id, AdicionarReceitaDto dto)
+        {
+            var produto = await _context.Produtos
+                .Include(p => p.Receita)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (produto == null)
+                return NotFound("Produto não encontrado");
+
+            foreach (var ingredienteDto in dto.Ingredientes)
+            {
+                var ingrediente = await _context.Ingredientes.FindAsync(ingredienteDto.IngredienteId);
+
+                if (ingrediente == null)
+                    return BadRequest($"Ingrediente {ingredienteDto.IngredienteId} não encontrado");
+
+                var receitaItem = new ProdutoReceita
+                {
+                    ProdutoId = produto.Id,
+                    IngredienteId = ingredienteDto.IngredienteId,
+                    QuantidadeNecessaria = ingredienteDto.Quantidade
+                };
+
+                produto.Receita.Add(receitaItem);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
     }
 }

@@ -149,3 +149,4 @@ C:\Users\User\Desktop\Projetos\SmartMenu\SmartMenu.Api\obj\Debug\net10.0\ref\Sma
 C:\Users\User\Desktop\Projetos\SmartMenu\SmartMenu.Api\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\User\Desktop\Projetos\SmartMenu\SmartMenu.Api\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\User\Desktop\Projetos\SmartMenu\SmartMenu.Api\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\User\Desktop\Projetos\SmartMenu\SmartMenu.Api\obj\Debug\net10.0\SmartMenu.Api.sourcelink.json
