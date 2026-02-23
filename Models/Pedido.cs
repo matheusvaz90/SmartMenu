@@ -20,7 +20,6 @@ namespace SmartMenu.Api.Models
         public string DeviceId { get; set; } = string.Empty;
         public decimal ValorTotal { get; set; }
 
-        // Relacionamento 1:N
         public List<PedidoItem> Itens { get; set; } = new();
     }
 }

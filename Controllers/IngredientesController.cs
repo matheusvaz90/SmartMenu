@@ -17,14 +17,14 @@ namespace SmartMenu.Api.Controllers
             _context = context;
         }
 
-        // GET: api/ingredientes
+        // GET: api/
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Ingrediente>>> GetIngredientes()
         {
             return await _context.Ingredientes.ToListAsync();
         }
 
-        // GET: api/ingredientes/5
+        // GET: api/ingredientes/id
         [HttpGet("{id}")]
         public async Task<ActionResult<Ingrediente>> GetIngrediente(int id)
         {
@@ -56,7 +56,7 @@ namespace SmartMenu.Api.Controllers
             return CreatedAtAction(nameof(GetIngrediente), new { id = ingrediente.Id }, ingrediente);
         }
 
-        // PUT: api/ingredientes/5
+        // PUT: api/ingredientes/id
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateIngrediente(int id, CriarIngredienteDto dto)
         {

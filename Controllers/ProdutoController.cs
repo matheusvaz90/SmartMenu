@@ -6,25 +6,45 @@ using SmartMenu.Api.Models;
 
 namespace SmartMenu.Api.Controllers
 {
-    [ApiController]                         // ⬅️ 1. Decorador
-    [Route("api/[controller]")]             // ⬅️ 2. Define URL
-    public class ProdutoController : ControllerBase  // ⬅️ 3. Herda de ControllerBase
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProdutoController : ControllerBase
     {
-        private readonly AppDbContext _context;  // ⬅️ 4. Declara o context
+        private readonly AppDbContext _context;
 
-        public ProdutoController(AppDbContext context)  // ⬅️ 5. Construtor
+        public ProdutoController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/produto
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Produto>>> GetProdutos()
+        public async Task<ActionResult<IEnumerable<ProdutoCardapioDto>>> GetProdutos()
         {
-            return await _context.Produtos.ToListAsync();
+
+            var produtos = await _context.Produtos
+                .Where(p => p.Ativo)
+                .Include(p => p.Receita)
+                    .ThenInclude(r => r.Ingrediente)
+                .ToListAsync();
+
+            var produtosDisponiveis = produtos
+                .Where(p => p.Receita.Any() &&
+                            p.Receita.All(r => r.Ingrediente.EstoqueAtual >= r.QuantidadeNecessaria))
+                .ToList();
+
+            var cardapio = produtosDisponiveis
+                .Select(p => new ProdutoCardapioDto
+                {
+                    Nome = p.Nome,
+                    Descricao = p.Descricao,
+                    PrecoBase = p.PrecoBase
+                })
+                .ToList();
+
+            return cardapio;
         }
 
-        // GET: api/produto/5
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Produto>> GetProduto(int id)
         {
@@ -36,7 +56,6 @@ namespace SmartMenu.Api.Controllers
             return produto;
         }
 
-        // POST: api/produto
         [HttpPost]
         public async Task<ActionResult<Produto>> CreateProduto(CriarProdutoDto dto)
         {
