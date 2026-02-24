@@ -10,15 +10,15 @@ using SmartMenu.Api.Models;
 
 namespace SmartMenu.Api.Controllers
 {
-    [ApiController]                         // ⬅️ 1. Decorador
-    [Route("api/[controller]")]             // ⬅️ 2. Define URL
+    [ApiController]
+    [Route("api/[controller]")]
 
     public class PedidosController : ControllerBase
     {
 
-        private readonly AppDbContext _context;  // ⬅️ 4. Declara o context
+        private readonly AppDbContext _context;
 
-        public PedidosController(AppDbContext context)  // ⬅️ 5. Construtor
+        public PedidosController(AppDbContext context)
         {
             _context = context;
         }
@@ -28,7 +28,7 @@ namespace SmartMenu.Api.Controllers
         {
             {
                 var pedido = await _context.Pedidos
-        .Include(p => p.Itens)  // ⬅️ Carrega os itens junto
+        .Include(p => p.Itens)
         .FirstOrDefaultAsync(p => p.Id == id);
 
                 if (pedido == null)
@@ -77,5 +77,38 @@ namespace SmartMenu.Api.Controllers
 
 
         }
+
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> AtualizarStatus(int id, AtualizaStatusDto dto)
+        {
+            var pedido = await _context.Pedidos
+        .Include(p => p.Itens)
+            .ThenInclude(i => i.Produto)
+                .ThenInclude(pr => pr.Receita)
+                    .ThenInclude(r => r.Ingrediente)
+        .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (pedido == null)
+            {
+                return NotFound();
+            }
+
+            pedido.Status = dto.NovoStatus;
+
+            if (dto.NovoStatus == StatusPedido.Entregue)
+            {
+                foreach (var item in pedido.Itens)
+                {
+                    foreach (var receita in item.Produto.Receita)
+                    {
+                        receita.Ingrediente.EstoqueAtual -= receita.QuantidadeNecessaria * item.Quantidade;
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
     }
 }
