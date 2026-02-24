@@ -96,6 +96,33 @@ namespace SmartMenu.Api.Migrations
                     b.ToTable("PedidoItens");
                 });
 
+            modelBuilder.Entity("SmartMenu.Api.Models.PedidoItemModificacao", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("IngredienteId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PedidoItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("PrecoAdicional")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IngredienteId");
+
+                    b.HasIndex("PedidoItemId");
+
+                    b.ToTable("Modificacoes");
+                });
+
             modelBuilder.Entity("SmartMenu.Api.Models.Produto", b =>
                 {
                     b.Property<int>("Id")
@@ -164,6 +191,25 @@ namespace SmartMenu.Api.Migrations
                     b.Navigation("Produto");
                 });
 
+            modelBuilder.Entity("SmartMenu.Api.Models.PedidoItemModificacao", b =>
+                {
+                    b.HasOne("SmartMenu.Api.Models.Ingrediente", "Ingrediente")
+                        .WithMany()
+                        .HasForeignKey("IngredienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SmartMenu.Api.Models.PedidoItem", "PedidoItem")
+                        .WithMany("Modificacoes")
+                        .HasForeignKey("PedidoItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ingrediente");
+
+                    b.Navigation("PedidoItem");
+                });
+
             modelBuilder.Entity("SmartMenu.Api.Models.ProdutoReceita", b =>
                 {
                     b.HasOne("SmartMenu.Api.Models.Ingrediente", "Ingrediente")
@@ -186,6 +232,11 @@ namespace SmartMenu.Api.Migrations
             modelBuilder.Entity("SmartMenu.Api.Models.Pedido", b =>
                 {
                     b.Navigation("Itens");
+                });
+
+            modelBuilder.Entity("SmartMenu.Api.Models.PedidoItem", b =>
+                {
+                    b.Navigation("Modificacoes");
                 });
 
             modelBuilder.Entity("SmartMenu.Api.Models.Produto", b =>

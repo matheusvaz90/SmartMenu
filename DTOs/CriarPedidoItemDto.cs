@@ -9,5 +9,6 @@ namespace SmartMenu.Api.DTOs
     {
         public int ProdutoId { get; set; }
         public int Quantidade { get; set; }
+        public List<ModificacaoItemDto> Modificacoes { get; set; } = new();
     }
 }

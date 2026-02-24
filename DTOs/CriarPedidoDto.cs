@@ -10,5 +10,6 @@ namespace SmartMenu.Api.DTOs
         public int NumeroMesa { get; set; }
         public string DeviceId { get; set; } = string.Empty;
         public List<CriarPedidoItemDto> Itens { get; set; } = new();
+        public List<ModificacaoItemDto> Modificacoes { get; set; } = new();
     }
 }

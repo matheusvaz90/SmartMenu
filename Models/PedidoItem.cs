@@ -12,5 +12,9 @@ namespace SmartMenu.Api.Models
 
         public int Quantidade { get; set; }
         public decimal PrecoUnitario { get; set; }
+
+        public List<PedidoItemModificacao> Modificacoes { get; set; } = new();
+
     }
+
 }
