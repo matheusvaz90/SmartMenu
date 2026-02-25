@@ -44,6 +44,12 @@ namespace SmartMenu.Api.Controllers
             return cardapio;
         }
 
+        [HttpGet("todos")]
+        public async Task<ActionResult<IEnumerable<Produto>>> GetTodosProdutos()
+        {
+            return await _context.Produtos.ToListAsync();
+        }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Produto>> GetProduto(int id)

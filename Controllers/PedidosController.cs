@@ -53,10 +53,22 @@ namespace SmartMenu.Api.Controllers
 
             foreach (var itemDto in dto.Itens)
             {
-                var produto = await _context.Produtos.FindAsync(itemDto.ProdutoId);
+                var produto = await _context.Produtos
+                    .Include(p => p.Receita)
+                        .ThenInclude(r => r.Ingrediente)
+                    .FirstOrDefaultAsync(p => p.Id == itemDto.ProdutoId);
 
                 if (produto == null)
                     return BadRequest($"Produto {itemDto.ProdutoId} não encontrado");
+
+                if (!produto.Ativo)
+                    return BadRequest($"Produto {produto.Nome} não está disponível");
+
+                var semEstoque = produto.Receita
+                    .Any(r => r.Ingrediente.EstoqueAtual < r.QuantidadeNecessaria * itemDto.Quantidade);
+
+                if (semEstoque)
+                    return BadRequest($"Estoque insuficiente para o produto {produto.Nome}");
 
                 var item = new PedidoItem
                 {
@@ -114,6 +126,12 @@ namespace SmartMenu.Api.Controllers
             {
                 return NotFound();
             }
+
+            if (pedido.Status == StatusPedido.Entregue || pedido.Status == StatusPedido.Cancelado)
+                return BadRequest("Pedido já finalizado");
+
+            if (dto.NovoStatus != StatusPedido.Cancelado && dto.NovoStatus < pedido.Status)
+                return BadRequest("Status não pode voltar");
 
             pedido.Status = dto.NovoStatus;
 
