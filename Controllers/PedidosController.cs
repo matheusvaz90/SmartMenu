@@ -166,5 +166,18 @@ namespace SmartMenu.Api.Controllers
             return NoContent();
         }
 
+        [HttpGet("cozinha")]
+        public async Task<ActionResult<IEnumerable<Pedido>>> CozinhaEndpoint()
+        {
+            return await _context.Pedidos
+                .Where(p => p.Status != StatusPedido.Entregue && p.Status != StatusPedido.Cancelado)
+                .Include(p => p.Itens)
+                    .ThenInclude(i => i.Produto)
+                .Include(p => p.Itens)
+                    .ThenInclude(i => i.Modificacoes)
+                        .ThenInclude(m => m.Ingrediente)
+                .ToListAsync();
+        }
+
     }
 }
