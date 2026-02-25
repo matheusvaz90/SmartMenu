@@ -179,5 +179,21 @@ namespace SmartMenu.Api.Controllers
                 .ToListAsync();
         }
 
+        [HttpGet("mesa/{numeroMesa}")]
+        public async Task<ActionResult<IEnumerable<Pedido>>> GetPedidosPorMesa(int numeroMesa)
+        {
+            return await _context.Pedidos
+            .Where(p => p.NumeroMesa == numeroMesa)
+            .Include(p => p.Itens)
+                 .ThenInclude(i => i.Produto)
+            .Include(p => p.Itens)
+                .ThenInclude(i => i.Modificacoes)
+                    .ThenInclude(m => m.Ingrediente)
+                .ToListAsync();
+        }
+
     }
+
+
+
 }
